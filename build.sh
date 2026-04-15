@@ -1,6 +1,7 @@
 #Build and run code
 
-rm -rf /build
+rm -rf build/*
+sleep 1
 mkdir build & cd build
 # Build
 cmake ..
