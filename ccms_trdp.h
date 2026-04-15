@@ -7,6 +7,11 @@
 
 #define GOTO_ERROR_NON_SUCESS(sucess) if (!sucess) { goto error ;}
 
+struct getInfo {
+    TRDP_PD_INFO_T *trdp_info ;
+    uint8_t *data ;
+} ;
+
 class TrdpManager{
 
     public : 
@@ -32,6 +37,7 @@ class TrdpManager{
         ) ; 
 
         TRDP_ERR_T sendData (const UINT8  *p_data, const uint32_t p_dataSize) ;
+        TRDP_ERR_T getData(getInfo *p_info, uint32_t p_dataSize) ;
 
         TRDP_ERR_T processData() ;
 

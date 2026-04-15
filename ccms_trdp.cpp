@@ -25,7 +25,7 @@ TRDP_ERR_T TrdpManager::openSession(const char* ipAddr){
 
     TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;
 
-    TRDP_IP_ADDR_T ownIp = (TRDP_IP_ADDR_T) inet_addr(ipAddr);
+    TRDP_IP_ADDR_T ownIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(ipAddr));
 
     err = tlc_openSession(
         &m_appHandle,
@@ -52,8 +52,8 @@ TRDP_ERR_T TrdpManager::subscribe(const uint32_t p_comid,
 
     TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;
 
-    TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) inet_addr(p_sourceIp);
-    TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) inet_addr(p_destIp);
+    TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_sourceIp));
+    TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_destIp));
 
     err = tlp_subscribe(
         m_appHandle,
@@ -91,8 +91,8 @@ TRDP_ERR_T TrdpManager::publish(const uint32_t p_comid,
 
     TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;
 
-    TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) inet_addr(p_sourceIp);
-    TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) inet_addr(p_destIp);
+    TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_sourceIp));
+    TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_destIp));
 
     err = tlp_publish(
         m_appHandle,
@@ -140,6 +140,26 @@ TRDP_ERR_T TrdpManager::sendData (const UINT8  *p_data, const uint32_t p_dataSiz
 error : 
     return err ;
 }
+
+TRDP_ERR_T TrdpManager::getData(getInfo *p_info, uint32_t p_dataSize){
+
+    TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;
+
+    err = tlp_get(
+        m_appHandle,
+        m_subHandle,
+        p_info->trdp_info,
+        p_info->data,
+        &p_dataSize
+    );
+
+    if (err != TRDP_NO_ERR){
+        goto error ;
+    }
+
+error : 
+    return err ;
+} 
 
 TRDP_ERR_T TrdpManager::processData()
 {

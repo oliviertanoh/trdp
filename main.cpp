@@ -5,16 +5,17 @@
 
 
 
+
 int main(void)
 {
    
     TrdpManager manager ;
 
     TRDP_ERR_T err ;
-    const uint8_t data [] = {0x01, 0x02, 0x03, 0x04} ;
-    const uint8_t *p_data = data ;
-    
-    
+
+    getInfo p_info ;
+    p_info.trdp_info = new TRDP_PD_INFO_T();
+    p_info.data = new uint8_t[256];
     
 
     //init session
@@ -25,23 +26,19 @@ int main(void)
     }
     std::cout << "initialization successful ! " << std::endl ;
 
-
-    //open session
-    err = manager.openSession("0.0.0.0") ;
-     if (err != TRDP_NO_ERR){
-        std::cout << "error during open session : " << err << std::endl ;
-        goto error ;
+    err = manager.openSession("0.0.0.0");
+    if (err != TRDP_NO_ERR){
+        std::cout << "error during open session : " << err << std::endl;
+        goto error;
     }
 
+
     //publish data
-    err = manager.publish(
+    err = manager.subscribe(
         1000,
-        0,
-        "0.0.0.0",
-        "239.255.0.1",
-        10000,
-        p_data,
-        sizeof(data)
+        "10.0.0.54",
+        "0.0.0.0",  
+        5000000
     ) ;
     
      if (err != TRDP_NO_ERR){
@@ -51,13 +48,21 @@ int main(void)
 
     while (1){
         manager.processData();
-        manager.sendData(data, sizeof(data));
-        if (err != TRDP_NO_ERR){
-            std::cout << "error during sending data : " << err << std::endl ;
-            break ;
+        err = manager.getData(&p_info, 256);
+
+        if (err == TRDP_NO_ERR){
+            std::cout << "data received : " ;
+            for(int i = 0; i < 4; i++){
+                std::cout << std::hex << (int)p_info.data[i] << " ";
+            }
+            std::cout << "data receive but not print" << std::endl;
         }
-        std::cout << "data sent.." << std::endl ;
-        usleep(1000000); 
+        else if (err != TRDP_NODATA_ERR){
+            std::cout << "error : " << err << std::endl;
+            break;
+        }
+
+        usleep(10000);
     }
     
     //close session
