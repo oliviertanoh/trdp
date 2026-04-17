@@ -122,6 +122,115 @@ error :
 }
 
 
+TRDP_ERR_T TrdpManager::readConfiguration(const char* p_nameFile){
+
+    TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;
+    TRDP_XML_DOC_HANDLE_T p_HandleDoc = {NULL} ;
+    TRDP_IF_CONFIG_T* pIfConfig = NULL ;
+    TRDP_COM_PAR_T *pComPar = NULL;
+    TRDP_MEM_CONFIG_T   memConfig;
+    TRDP_DBG_CONFIG_T   dbgConfig;
+    char* p_interfaceName = NULL ;
+    TRDP_PD_CONFIG_T p_pdConfig  ;
+    TRDP_MD_CONFIG_T p_mdConfig ;
+    uint32_t numIfConfig = 0;
+    uint32_t numComPar = 0;
+    uint32_t           numExchgPar = 0;
+    TRDP_EXCHG_PAR_T *pExchgPar  = NULL;
+
+    // ecrire dans un pointeur null ?
+
+    err = tau_prepareXmlDoc(p_nameFile, &p_HandleDoc) ;
+
+    if (err != TRDP_NO_ERR){
+        goto error ;
+    }
+
+
+    err = tau_readXmlDeviceConfig(
+        &p_HandleDoc,
+        &memConfig,
+        &dbgConfig,
+        &numComPar,
+        &pComPar,
+        &numIfConfig,
+        &pIfConfig
+    );
+
+    if (err != TRDP_NO_ERR){
+        goto error ;
+    }
+
+    if (numIfConfig > 0)
+    {
+        p_interfaceName = pIfConfig->ifName ;
+    }
+    
+    err = tau_readXmlInterfaceConfig(
+        &p_HandleDoc,
+        p_interfaceName,
+        NULL,
+        &p_pdConfig,
+        &p_mdConfig,
+        &numExchgPar,
+        &pExchgPar
+    );
+
+    if (err != TRDP_NO_ERR){
+        goto error ;
+    }
+
+
+    // 4. Affiche les données
+    std::cout << "=== Configuration chargée ===" << std::endl;
+    std::cout << "Nombre interfaces  : " << numIfConfig << std::endl;
+    std::cout << "Nombre com-params  : " << numComPar   << std::endl ;
+
+
+    for (UINT32 i = 0; i < numIfConfig; i++)
+    {
+        std::cout << "--- Interface " << i << " ---" << std::endl;
+        std::cout << "  name      : " << pIfConfig[i].ifName    << std::endl;
+        std::cout << "  networkId : " << (int)pIfConfig[i].networkId << std::endl;
+        std::cout << "  hostIp    : " << (pIfConfig[i].hostIp >> 24 & 0xFF) << "."
+                                      << (pIfConfig[i].hostIp >> 16 & 0xFF) << "."
+                                      << (pIfConfig[i].hostIp >> 8  & 0xFF) << "."
+                                      << (pIfConfig[i].hostIp       & 0xFF) << std::endl;
+    }
+
+    std::cout << "--- PD Config ---" << std::endl;
+    std::cout << "  timeout   : " << p_pdConfig.timeout   << " µs" << std::endl;
+    std::cout << "  port      : " << p_pdConfig.port      << std::endl;
+
+    std::cout << "--- MD Config ---" << std::endl;
+    std::cout << "  replyTimeout   : " << p_mdConfig.replyTimeout   << " µs" << std::endl;
+    std::cout << "  confirmTimeout : " << p_mdConfig.confirmTimeout << " µs" << std::endl;
+    std::cout << "  udpPort        : " << p_mdConfig.udpPort        << std::endl;
+
+
+
+error : 
+    return err ;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 TRDP_ERR_T TrdpManager::sendData (const UINT8  *p_data, const uint32_t p_dataSize){
     
     TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;

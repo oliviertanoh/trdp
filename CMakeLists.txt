@@ -21,3 +21,5 @@ target_link_libraries(setup_protocole PRIVATE
     pthread
     uuid
 )
+
+set(CMAKE_BUILD_TYPE Debug)

@@ -1,0 +1,265 @@
+<device host-name="raspberry" type="mcu"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="trdp-config.xsd">
+
+    <!-- =====================================================
+         CONFIGURATION MÉMOIRE
+         Pool mémoire statique alloué au démarrage.
+         memory-size : taille totale du pool en bytes
+         ===================================================== -->
+    <device-configuration memory-size="65535">
+        <mem-block-list>
+            <!-- Tailles valides (définies dans le XSD) :
+                 32, 72, 128, 256, 512, 1024, 1480, 2048,
+                 4096, 11520, 16384, 32768, 65536, 131072 -->
+            <mem-block size="32"    preallocate="10"/>
+            <mem-block size="72"    preallocate="10"/>
+            <mem-block size="128"   preallocate="10"/>
+            <mem-block size="256"   preallocate="10"/>
+            <mem-block size="512"   preallocate="5"/>
+            <mem-block size="1024"  preallocate="5"/>
+            <mem-block size="1480"  preallocate="2"/>
+            <mem-block size="11520" preallocate="1"/>
+        </mem-block-list>
+    </device-configuration>
+
+    <bus-interface-list>
+        <bus-interface network-id="1" name="eth0" host-ip = "172.29.173.22">
+
+            <!-- =====================================================
+                 CONFIGURATION DU PROCESS TRDP
+                 Optionnel - si absent, valeurs par défaut utilisées
+                 cycle-time     : période du thread TRDP en µs       (défaut: 10000 = 10ms)
+                 blocking       : mode bloquant ou non bloquant       (défaut: no)
+                 traffic-shaping: lissage du trafic réseau            (défaut: on)
+                 priority       : priorité du thread (1=max, 255=min) (défaut: 64)
+                 ===================================================== -->
+            <trdp-process
+                cycle-time      = "10000"
+                blocking        = "no"
+                traffic-shaping = "on"
+                priority        = "64"/>
+
+            <!-- =====================================================
+                 PARAMÈTRES PD (Process Data)
+                 Optionnel - valeurs par défaut si absent
+                 timeout-value    : délai avant données invalides en µs (défaut: 100000 = 100ms)
+                 validity-behavior: comportement si timeout             (défaut: zero)
+                                    zero = met les données à zéro
+                                    keep = garde la dernière valeur
+                 ttl              : Time To Live IP                     (défaut: 64)
+                 qos              : Quality of Service réseau (0-7)     (défaut: 5)
+                 marshall         : marshalling auto                    (défaut: off)
+                 callback         : callbacks                           (défaut: off)
+                                    on / off / always
+                 port             : port UDP pour PD                    (défaut: 17224)
+                 ===================================================== -->
+            <pd-com-parameter
+                timeout-value    = "100000"
+                validity-behavior= "zero"
+                ttl              = "64"
+                qos              = "5"
+                marshall         = "off"
+                callback         = "off"
+                port             = "17224"/>
+
+            <!-- =====================================================
+                 PARAMÈTRES MD (Message Data)
+                 Optionnel - valeurs par défaut si absent
+                 confirm-timeout : délai attente confirmation en µs     (défaut: 1000000  = 1s)
+                 reply-timeout   : délai attente réponse en µs          (défaut: 5000000  = 5s)
+                 connect-timeout : délai fermeture connexion TCP en µs  (défaut: 60000000 = 60s)
+                 ttl             : Time To Live IP                       (défaut: 64)
+                 qos             : Quality of Service réseau (0-7)       (défaut: 3)
+                 retries         : nombre de retransmissions (0-5)       (défaut: 2)
+                 protocol        : protocole de transport UDP/TCP        (défaut: UDP)
+                 marshall        : marshalling auto                      (défaut: off)
+                 callback        : callbacks                             (défaut: off)
+                 udp-port        : port UDP pour MD                      (défaut: 17225)
+                 tcp-port        : port TCP pour MD                      (défaut: 17225)
+                 num-sessions    : nb max sessions (protection DoS)      (défaut: 1000)
+                 ===================================================== -->
+            <md-com-parameter
+                confirm-timeout = "1000000"
+                reply-timeout   = "5000000"
+                connect-timeout = "60000000"
+                ttl             = "64"
+                qos             = "3"
+                retries         = "2"
+                protocol        = "UDP"
+                marshall        = "off"
+                callback        = "off"
+                udp-port        = "17225"
+                tcp-port        = "17225"
+                num-sessions    = "1000"/>
+
+            <!-- =====================================================
+                 TELEGRAMS
+                 Un telegram = description complète d'un échange de données
+                 com-id           : identifiant du telegram (requis)
+                 data-set-id      : id du dataset transporté (requis, >= 1000)
+                 com-parameter-id : référence com-parameter (optionnel)
+                 type             : sink / source / source-sink (optionnel)
+                 create           : création auto publisher/subscriber  (défaut: off)
+                 ===================================================== -->
+
+            <!-- Telegram MD — com-id 2000 -->
+            <telegram
+                com-id           = "2000"
+                data-set-id      = "1000"
+                com-parameter-id = "2">
+
+                <!-- =================================================
+                     PARAMÈTRES MD spécifiques à ce telegram
+                     Surcharge les valeurs de md-com-parameter
+                     confirm-timeout : délai attente confirmation en µs (défaut: hérité)
+                     reply-timeout   : délai attente réponse en µs      (défaut: hérité)
+                     marshall        : marshalling auto                 (défaut: off)
+                     callback        : callbacks                        (défaut: off)
+                     protocol        : UDP ou TCP                       (défaut: UDP)
+                     ================================================= -->
+                <md-parameter
+                    confirm-timeout = "1000000"
+                    reply-timeout   = "1000000"
+                    marshall        = "off"
+                    callback        = "off"
+                    protocol        = "UDP"/>
+
+                <!-- =================================================
+                     SOURCE
+                     id   : identifiant de la source (requis)
+                     uri1 : URI/IP de l'émetteur (requis)
+                            syntaxe : [user@]host
+                     uri2 : second URI pour redondance (optionnel)
+                     name : nom lisible (optionnel)
+                     ================================================= -->
+                <source id="1" uri1="10.0.0.54"/>
+
+                <!-- =================================================
+                     DESTINATION
+                     id   : identifiant de la destination (requis)
+                     uri  : URI/IP du destinataire (requis)
+                            syntaxe : [user@]host
+                     name : nom lisible (optionnel)
+                     ================================================= -->
+                <destination id="1" uri="10.0.0.227"/>
+
+            </telegram>
+
+            <!-- Telegram PD — com-id 2001 -->
+            <telegram
+                com-id           = "2001"
+                data-set-id      = "1000"
+                com-parameter-id = "1">
+
+                <!-- =================================================
+                     PARAMÈTRES PD spécifiques à ce telegram
+                     Surcharge les valeurs de pd-com-parameter
+                     timeout          : délai avant données invalides en µs (défaut: hérité)
+                     validity-behavior: comportement si timeout             (défaut: zero)
+                     cycle            : période d'envoi en µs              (REQUIS)
+                     redundant        : >0 si redondant, 0 sinon           (défaut: 0)
+                     marshall         : marshalling auto                   (défaut: off)
+                     callback         : callbacks on/off/always            (défaut: off)
+                     ================================================= -->
+                <pd-parameter
+                    timeout           = "100000"
+                    validity-behavior = "zero"
+                    cycle             = "100000"
+                    redundant         = "0"
+                    marshall          = "off"
+                    callback          = "off"/>
+
+                <source      id="1" uri1="10.0.0.54"/>
+                <destination id="1" uri="10.0.0.227"/>
+
+            </telegram>
+
+        </bus-interface>
+    </bus-interface-list>
+
+    <!-- =====================================================
+         MAPPED DEVICES - optionnel
+         Réutilise la config pour plusieurs devices identiques.
+         Typique en ferroviaire : contrôleurs de portes,
+         capteurs identiques sur chaque voiture.
+         ===================================================== -->
+    <mapped-device-list>
+    </mapped-device-list>
+
+    <!-- =====================================================
+         COMMUNICATION PARAMETERS
+         Profils réutilisables via com-parameter-id.
+         IMPORTANT : id=1 (PD) et id=2 (MD) sont déjà
+         intégrés par défaut — redéclarer uniquement si
+         tu veux des valeurs différentes.
+         id      : identifiant du profil (requis)
+         qos     : Quality of Service 0-7 (requis)
+         ttl     : Time To Live 0-255     (défaut: 64)
+         retries : retransmissions MD 0-5 (défaut: 2)
+         tsn     : TSN scheduling         (défaut: off)
+         vlan    : VLAN ID 0-4094         (défaut: 0)
+         ===================================================== -->
+    <com-parameter-list>
+        <com-parameter id="1" qos="5" ttl="64" retries="0"/>  <!-- profil PD -->
+        <com-parameter id="2" qos="3" ttl="64" retries="3"/>  <!-- profil MD -->
+    </com-parameter-list>
+
+    <!-- =====================================================
+         DATASETS
+         Structure des données échangées = struct C.
+         id >= 1000 obligatoire (XSD impose minInclusive=1000)
+
+         element types disponibles :
+           BITSET8, BOOL8, ANTIVALENT8
+           CHAR8, UTF16
+           INT8, INT16, INT32, INT64
+           UINT8, UINT16, UINT32, UINT64
+           REAL32, REAL64
+           TIMEDATE32, TIMEDATE48, TIMEDATE64
+           ou id d'un autre dataset (imbrication)
+
+         array-size : 1  = valeur unique
+                      >1 = tableau fixe
+                      0  = tableau dynamique (MD uniquement)
+         ===================================================== -->
+    <data-set-list>
+
+        <!-- Dataset 1000 : "date" — 3 champs UINT32
+             Équivalent C :
+             struct date {
+                 UINT32 a1;
+                 UINT32 b1;
+                 UINT32 c1;
+             }; -->
+        <data-set id="1000" name="date">
+            <element type="UINT32" array-size="1" name="a1"/>
+            <element type="UINT32" array-size="1" name="b1"/>
+            <element type="UINT32" array-size="1" name="c1"/>
+        </data-set>
+
+    </data-set-list>
+
+    <!-- =====================================================
+         DEBUG
+         Optionnel — contrôle la sortie des logs TRDP.
+         file-name : chemin fichier log ("" = stdout)
+         file-size : taille max avant rotation en bytes   (défaut: 65536)
+         level     : niveau de log
+                     E/e = erreurs
+                     W/w = warnings + erreurs
+                     I/i = info + warnings + erreurs
+                     D/d = debug complet
+         info      : infos additionnelles (pattern: [AaDdFfCc ]{1,4})
+                     D/d = date et heure
+                     F/f = fichier source + ligne
+                     C/c = catégorie
+                     A/a = tous
+         ===================================================== -->
+    <debug
+        file-name = "/home/pi/ccms-trdp/debug.log"
+        file-size = "65536"
+        level     = "W"
+        info      = "DFC"/>
+
+</device>

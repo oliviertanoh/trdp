@@ -7,8 +7,14 @@ mkdir build & cd build
 cmake ..
 make
 
-# wait 2 seconds
-sleep 2
+# wait 1 seconds & copy
+sleep 1
+
+cd ..
+cp device.xml build/
+cd build
+
+sleep 1
 
 # Run code
 ./setup_protocole
