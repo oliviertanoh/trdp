@@ -10,11 +10,9 @@ int main(void)
 {
    
     TrdpManager manager ;
-
     TRDP_ERR_T err ;
 
     const char* file = "device.xml" ;
-
 
     //init session
     

@@ -208,26 +208,21 @@ TRDP_ERR_T TrdpManager::readConfiguration(const char* p_nameFile){
     std::cout << "  udpPort        : " << p_mdConfig.udpPort        << std::endl;
 
 
+    std::cout << "--- Devices configuration ---" << std::endl;
+    std::cout << "  Port Com   : " << numComPar  << std::endl;
+
+    std::cout << "id :  " << pComPar->id << std::endl;
+    std::cout << "qos :  " << (int)pComPar->sendParam.qos << std::endl;
+    std::cout << "ttl :  " << (int)pComPar->sendParam.ttl << std::endl;
+    std::cout << "retries :  " << (int)pComPar->sendParam.retries << std::endl;
+
+
+
 
 error : 
     return err ;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

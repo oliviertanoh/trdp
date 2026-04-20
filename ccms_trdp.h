@@ -3,9 +3,8 @@
 #include <cstdint>
 #include <sys/select.h>  
 #include <arpa/inet.h>
-#include "tau_xml.h"
-#include "trdp_if_light.h"
-
+#include <vector>
+#include "typeDef.h"
 
 #define GOTO_ERROR_NON_SUCESS(sucess) if (!sucess) { goto error ;}
 
@@ -38,14 +37,11 @@ class TrdpManager{
                             const uint32_t p_dataSize
         ) ; 
 
+        
+
 
 
         TRDP_ERR_T readConfiguration(const char* p_nameFile) ;
-
-
-
-
-
 
         TRDP_ERR_T sendData (const UINT8  *p_data, const uint32_t p_dataSize) ;
         TRDP_ERR_T getData(getInfo *p_info, uint32_t p_dataSize) ;
@@ -54,8 +50,8 @@ class TrdpManager{
 
     private :
         TRDP_APP_SESSION_T  m_appHandle;
-        TRDP_SUB_T m_subHandle ;
-        TRDP_PUB_T m_pubHandle ;
+        std::vector<TRDP_SUB_T> m_subHandle ;
+        std::vector<TRDP_PUB_T> m_pubHandle ;
 
 };
 

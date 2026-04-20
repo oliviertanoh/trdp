@@ -2,7 +2,7 @@
 
 rm -rf build/*
 sleep 1
-mkdir build & cd build
+cd build
 # Build
 cmake ..
 make
@@ -18,3 +18,4 @@ sleep 1
 
 # Run code
 ./setup_protocole
+
