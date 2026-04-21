@@ -3,15 +3,9 @@
 #include <cstdint>
 #include <sys/select.h>  
 #include <arpa/inet.h>
-#include <vector>
 #include "typeDef.h"
 
 #define GOTO_ERROR_NON_SUCESS(sucess) if (!sucess) { goto error ;}
-
-struct getInfo {
-    TRDP_PD_INFO_T *trdp_info ;
-    uint8_t *data ;
-} ;
 
 class TrdpManager{
 
@@ -38,9 +32,6 @@ class TrdpManager{
         ) ; 
 
         
-
-
-
         TRDP_ERR_T readConfiguration(const char* p_nameFile) ;
 
         TRDP_ERR_T sendData (const UINT8  *p_data, const uint32_t p_dataSize) ;
@@ -49,9 +40,8 @@ class TrdpManager{
         TRDP_ERR_T processData() ;
 
     private :
-        TRDP_APP_SESSION_T  m_appHandle;
-        std::vector<TRDP_SUB_T> m_subHandle ;
-        std::vector<TRDP_PUB_T> m_pubHandle ;
+        deviceConfig m_configDevice ; ;
+        networkConfig m_configNetwork ;
 
 };
 

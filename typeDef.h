@@ -1,8 +1,16 @@
 #include "tau_xml.h"
 #include "trdp_if_light.h"
+#include <vector>
 
 
-//read the TRDP device configuration parameters out of the XML configuration file
+// Get information when data is receive
+struct getInfo {
+    TRDP_PD_INFO_T *trdp_info ;
+    uint8_t *data ;
+} ;
+
+
+// Read the TRDP device configuration parameters out of the XML configuration file
 struct xmlDeviceConfig {
     TRDP_XML_DOC_HANDLE_T p_xmlFile; // Handle of the XML document prepared by tau_prepareXmlDoc
     TRDP_MEM_CONFIG_T   memoryConfig; //Memory configuration
@@ -25,7 +33,15 @@ struct xmlInterfaceConfig {
 };
 
 
+// Device configuation
 struct deviceConfig {
     xmlInterfaceConfig interface;
     xmlDeviceConfig device;
 };
+
+// Network configuration
+struct networkConfig {
+    TRDP_APP_SESSION_T  m_appHandle;
+    std::vector<TRDP_SUB_T> m_subHandle ;
+    std::vector<TRDP_PUB_T> m_pubHandle ;
+} ;

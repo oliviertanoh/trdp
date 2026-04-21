@@ -3,9 +3,6 @@
 
 
 
-
-
-
 int main(void)
 {
    
