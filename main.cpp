@@ -11,8 +11,9 @@ int main(void)
     TrdpManager manager ;
 
     TRDP_ERR_T err ;
-    const uint8_t data [] = {0x01, 0x02, 0x03, 0x04} ;
-    const uint8_t *p_data = data ;
+    char buffer [64] ;
+    uint32_t counter = 0 ;
+    const uint8_t *p_data = (uint8_t*)buffer ;
     
     
     
@@ -27,7 +28,7 @@ int main(void)
 
 
     //open session
-    err = manager.openSession("0.0.0.0") ;
+    err = manager.openSession("172.29.173.22") ;
      if (err != TRDP_NO_ERR){
         std::cout << "error during open session : " << err << std::endl ;
         goto error ;
@@ -37,11 +38,11 @@ int main(void)
     err = manager.publish(
         1000,
         0,
-        "0.0.0.0",
-        "239.255.0.1",
+        "172.29.173.22",
+        "10.0.0.54",
         10000,
         p_data,
-        sizeof(data)
+        sizeof(buffer)
     ) ;
     
      if (err != TRDP_NO_ERR){
@@ -50,13 +51,20 @@ int main(void)
     }
 
     while (1){
+
+        sprintf(buffer, "wsl msg - %d \n", counter);
+
         manager.processData();
-        manager.sendData(data, sizeof(data));
+
+        manager.sendData(p_data, sizeof(buffer));
+
         if (err != TRDP_NO_ERR){
             std::cout << "error during sending data : " << err << std::endl ;
             break ;
         }
-        std::cout << "data sent.." << std::endl ;
+
+        std::cout << buffer ;
+        counter ++ ;
         usleep(1000000); 
     }
     
