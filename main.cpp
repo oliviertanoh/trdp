@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 
+    
 
 int main(void)
 {
@@ -14,6 +15,11 @@ int main(void)
     // Data to send
     char buffer [64] ;
     const uint8_t *data = (const uint8_t *)buffer ;
+
+    // Get data
+    getInfo p_info ;
+    p_info.trdp_info = new TRDP_PD_INFO_T();
+    p_info.data = new uint8_t[256];
 
     //init session
     
@@ -94,7 +100,7 @@ int main(void)
 
     std::cout << "Session opened successfully... ! " << std::endl ;
 
-    for (uint32_t i = 0 ; i < manager.m_device.interface.nbTelegramParam ;){
+    for (uint32_t i = 0 ; i < manager.m_device.interface.nbTelegramParam ; i++){
 
         switch (manager.m_device.interface.telegramParam[i].type)
         {
@@ -105,21 +111,71 @@ int main(void)
                             10000,
                             data,
                             sizeof(data)) ;
+             if (err != TRDP_NO_ERR){
+                std::cout << "error during publish" << std::endl ;
+                goto error ;
+            }
+            std::cout<< " Publish to Com ID : " << manager.m_device.interface.telegramParam[i].comId << std::endl ;
             break;
         case 2: // Subscribe
-            /* code */
+            err = manager.subscribe(manager.m_device.interface.telegramParam[i].comId,
+                            *manager.m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *manager.m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000);
+            if (err != TRDP_NO_ERR){
+                std::cout << "error during subscribe" << std::endl ;
+                goto error ;
+            }
+            std::cout<< "Subscribe to Com ID : " << manager.m_device.interface.telegramParam[i].comId << std::endl ;
             break;
         case 3:
-            /* code */
+            err = manager.publish(manager.m_device.interface.telegramParam[i].comId,
+                            *manager.m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *manager.m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000,
+                            data,
+                            sizeof(data)) ;
+            
+            if (err != TRDP_NO_ERR){
+                std::cout << "error during publish_ : " << err << std::endl ;
+                goto error ;
+            }
+
+            err = manager.subscribe(manager.m_device.interface.telegramParam[i].comId,
+                            *manager.m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *manager.m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000);
+
+            if (err != TRDP_NO_ERR){
+                std::cout << "error during subscribe _ : " << err << std::endl ;
+                goto error ;
+            }
+
+            std::cout<< "Subscribe and Publish to Com ID : " << manager.m_device.interface.telegramParam[i].comId << std::endl ;
             break;
         
         default:
+                std::cout<< "Unable to subscribe or publish to any devices..." << std::endl ;
             break;
         }
     }
 
+    while (1)
+    {
+        //Publish data
+        err = manager.sendData(2001, data , sizeof(data)) ;
+        if (err != TRDP_NO_ERR){
+            std::cout << "Data not sent..." << std ::endl ;
+        }
+
+        std::cout << "data sent !" << std::endl ;
+        usleep(1000000);
+    }
+    
+
     //close session
     manager.terminateSession() ;
+
    
 
     return 0;

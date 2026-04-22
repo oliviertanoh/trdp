@@ -55,7 +55,7 @@ TRDP_ERR_T TrdpManager::subscribe(const uint32_t p_comid,
     TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_sourceIp));
     TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_destIp));
 
-    m_network.subscribe[p_comid] = nullptr ;
+    m_network.subscribe[p_comid] ;
 
     err = tlp_subscribe(
         m_network.session,
@@ -95,7 +95,7 @@ TRDP_ERR_T TrdpManager::publish(const uint32_t p_comid,
     TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_sourceIp));
     TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_destIp));
 
-    m_network.publish[p_comid] = nullptr ;
+    m_network.publish[p_comid] ;
 
     err = tlp_publish(
         m_network.session,

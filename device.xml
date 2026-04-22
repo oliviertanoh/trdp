@@ -134,7 +134,7 @@
                      uri2 : second URI pour redondance (optionnel)
                      name : nom lisible (optionnel)
                      ================================================= -->
-                <source id="1" uri1="10.0.0.54"/>
+                <source id="1" uri1="172.29.173.22"/>
 
                 <!-- =================================================
                      DESTINATION
@@ -143,14 +143,14 @@
                             syntaxe : [user@]host
                      name : nom lisible (optionnel)
                      ================================================= -->
-                <destination id="1" uri="10.0.0.227"/>
+                <destination id="1" uri="10.0.0.220"/>
 
             </telegram>
 
             <!-- Telegram PD — com-id 2001 -->
             <telegram
                 com-id           = "2001"
-                data-set-id      = "1000"
+                data-set-id      = "1001"
                 com-parameter-id = "1"
                 type="source-sink">
 
@@ -172,8 +172,8 @@
                     marshall          = "off"
                     callback          = "off"/>
 
-                <source      id="1" uri1="10.0.0.54"/>
-                <destination id="1" uri="10.0.0.227"/>
+                <source      id="1" uri1="172.29.173.22"/>
+                <destination id="1" uri="10.0.0.220"/>
 
             </telegram>
 
