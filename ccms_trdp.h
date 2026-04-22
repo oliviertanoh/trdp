@@ -23,7 +23,6 @@ class TrdpManager{
                         const uint32_t p_timeout) ;
 
         TRDP_ERR_T publish (const uint32_t p_comid,
-                            uint32_t p_topoCount,
                             const char* p_sourceIp,
                             const char* p_destIp,
                             const uint32_t p_interval,
@@ -34,14 +33,19 @@ class TrdpManager{
         
         TRDP_ERR_T readConfiguration(const char* p_nameFile) ;
 
-        TRDP_ERR_T sendData (const UINT8  *p_data, const uint32_t p_dataSize) ;
-        TRDP_ERR_T getData(getInfo *p_info, uint32_t p_dataSize) ;
+        TRDP_ERR_T sendData (uint32_t p_comid, const uint8_t  *p_data, const uint32_t p_dataSize) ;
+        TRDP_ERR_T getData(uint32_t p_comid, getInfo *p_info, uint32_t p_dataSize) ;
 
         TRDP_ERR_T processData() ;
 
+    
+
+
+
+        deviceConfig m_device ;
+
     private :
-        deviceConfig m_configDevice ; ;
-        networkConfig m_configNetwork ;
+        networkConfig m_network ;
 
 };
 

@@ -107,7 +107,8 @@
             <telegram
                 com-id           = "2000"
                 data-set-id      = "1000"
-                com-parameter-id = "2">
+                com-parameter-id = "2"
+                type="source-sink">
 
                 <!-- =================================================
                      PARAMÈTRES MD spécifiques à ce telegram
@@ -150,7 +151,8 @@
             <telegram
                 com-id           = "2001"
                 data-set-id      = "1000"
-                com-parameter-id = "1">
+                com-parameter-id = "1"
+                type="source-sink">
 
                 <!-- =================================================
                      PARAMÈTRES PD spécifiques à ce telegram

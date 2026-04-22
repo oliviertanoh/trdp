@@ -1,6 +1,6 @@
 #include "tau_xml.h"
 #include "trdp_if_light.h"
-#include <vector>
+#include <map>
 
 
 // Get information when data is receive
@@ -12,7 +12,6 @@ struct getInfo {
 
 // Read the TRDP device configuration parameters out of the XML configuration file
 struct xmlDeviceConfig {
-    TRDP_XML_DOC_HANDLE_T p_xmlFile; // Handle of the XML document prepared by tau_prepareXmlDoc
     TRDP_MEM_CONFIG_T   memoryConfig; //Memory configuration
     TRDP_DBG_CONFIG_T   debugConfig;  //Debug printout configuration for application use
     TRDP_COM_PAR_T *ComParameter; //Pointer to array of com parameters
@@ -24,24 +23,24 @@ struct xmlDeviceConfig {
 
 // Read the interface relevant telegram parameters
 struct xmlInterfaceConfig {
-    TRDP_XML_DOC_HANDLE_T xmlFile; // Handle of the XML document prepared by tau_prepareXmlDoc
     char* interfaceName ; //Interface name
     TRDP_PD_CONFIG_T processDatadConfig  ; //PD default configuration for the interface
     TRDP_MD_CONFIG_T messageDataConfig ; //MD default configuration for the interface
-    uint32_t numExchPararameter ; //Number of configured telegrams
-    TRDP_EXCHG_PAR_T *pExchgPar ; //Pointer to array of telegram configurations
+    uint32_t nbTelegramParam ; //Number of configured telegrams
+    TRDP_EXCHG_PAR_T *telegramParam ; //Pointer to array of telegram configurations
 };
 
 
 // Device configuation
 struct deviceConfig {
+    TRDP_XML_DOC_HANDLE_T configFile;
     xmlInterfaceConfig interface;
     xmlDeviceConfig device;
 };
 
 // Network configuration
 struct networkConfig {
-    TRDP_APP_SESSION_T  m_appHandle;
-    std::vector<TRDP_SUB_T> m_subHandle ;
-    std::vector<TRDP_PUB_T> m_pubHandle ;
-} ;
+    TRDP_APP_SESSION_T session;
+    std::map<uint32_t, TRDP_SUB_T> subscribe;  // clé = comId
+    std::map<uint32_t, TRDP_PUB_T> publish;
+};
