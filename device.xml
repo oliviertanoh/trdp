@@ -108,7 +108,8 @@
                 com-id           = "2000"
                 data-set-id      = "1000"
                 com-parameter-id = "2"
-                type="source-sink">
+                create="off"
+                type="sink">
 
                 <!-- =================================================
                      PARAMÈTRES MD spécifiques à ce telegram

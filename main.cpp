@@ -13,7 +13,7 @@ int main(void)
     const char* file = "device.xml" ;
 
     // Data to send
-    char buffer [64] ;
+    char buffer [64] = {'h', 'e', 'y','-','o','l','i','v','i','e','r'} ;
     const uint8_t *data = (const uint8_t *)buffer ;
 
     // Get data
@@ -163,6 +163,7 @@ int main(void)
     while (1)
     {
         //Publish data
+        manager.processData() ;
         err = manager.sendData(2001, data , sizeof(data)) ;
         if (err != TRDP_NO_ERR){
             std::cout << "Data not sent..." << std ::endl ;

@@ -51,7 +51,7 @@ TRDP_ERR_T TrdpManager::subscribe(const uint32_t p_comid,
                             const uint32_t p_timeout) {
 
     TRDP_ERR_T err = TRDP_UNKNOWN_ERR  ;
-
+                                
     TRDP_IP_ADDR_T sourceIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_sourceIp));
     TRDP_IP_ADDR_T destIp = (TRDP_IP_ADDR_T) ntohl(inet_addr(p_destIp));
 
