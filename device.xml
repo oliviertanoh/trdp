@@ -24,7 +24,7 @@
     </device-configuration>
 
     <bus-interface-list>
-        <bus-interface network-id="1" name="eth0" host-ip = "172.29.173.22">
+        <bus-interface network-id="1" name="eth0" host-ip = "192.168.50.2">
 
             <!-- =====================================================
                  CONFIGURATION DU PROCESS TRDP
@@ -135,7 +135,7 @@
                      uri2 : second URI pour redondance (optionnel)
                      name : nom lisible (optionnel)
                      ================================================= -->
-                <source id="1" uri1="172.29.173.22"/>
+                <source id="1" uri1="192.168.50.1"/>
 
                 <!-- =================================================
                      DESTINATION
@@ -144,7 +144,7 @@
                             syntaxe : [user@]host
                      name : nom lisible (optionnel)
                      ================================================= -->
-                <destination id="1" uri="10.0.0.220"/>
+                <destination id="1" uri="192.168.50.2"/>
 
             </telegram>
 
@@ -173,8 +173,8 @@
                     marshall          = "off"
                     callback          = "off"/>
 
-                <source      id="1" uri1="172.29.173.22"/>
-                <destination id="1" uri="10.0.0.220"/>
+                <source      id="1" uri1="192.168.50.1"/>
+                <destination id="1" uri="192.168.50.2"/>
 
             </telegram>
 
