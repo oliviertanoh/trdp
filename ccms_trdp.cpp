@@ -83,6 +83,76 @@ error :
     return err ;
 }
 
+TRDP_ERR_T TrdpManager::subscribe_publish_all_device(const uint8_t *p_subscribeData, const uint8_t *p_publishData){
+
+    TRDP_ERR_T err = TRDP_UNKNOWN_ERR ;
+
+    for (uint32_t i = 0 ; i < m_device.interface.nbTelegramParam ; i++){
+
+        switch (m_device.interface.telegramParam[i].type)
+        {
+        case 1: // Publish
+            err = publish(m_device.interface.telegramParam[i].comId,
+                            *m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000,
+                            p_publishData,
+                            sizeof(p_publishData)) ;
+             if (err != TRDP_NO_ERR){
+                std::cout << "error during publish" << std::endl ;
+                goto error ;
+            }
+            std::cout<< " Publish to Com ID : " << m_device.interface.telegramParam[i].comId << std::endl ;
+            break;
+        case 2: // Subscribe
+            err = subscribe(m_device.interface.telegramParam[i].comId,
+                            *m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000);
+            if (err != TRDP_NO_ERR){
+                std::cout << "error during subscribe" << std::endl ;
+                goto error ;
+            }
+            std::cout<< "Subscribe to Com ID : " << m_device.interface.telegramParam[i].comId << std::endl ;
+            break;
+        case 3:
+            err = publish(m_device.interface.telegramParam[i].comId,
+                            *m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000,
+                            p_subscribeData,
+                            sizeof(p_subscribeData)) ;
+            
+            if (err != TRDP_NO_ERR){
+                std::cout << "error during publish_ : " << err << std::endl ;
+                goto error ;
+            }
+
+            err = subscribe(m_device.interface.telegramParam[i].comId,
+                            *m_device.interface.telegramParam[i].pSrc->pUriHost1,
+                            *m_device.interface.telegramParam[i].pDest->pUriHost,
+                            10000);
+
+            if (err != TRDP_NO_ERR){
+                std::cout << "error during subscribe _ : " << err << std::endl ;
+                goto error ;
+            }
+
+            std::cout<< "Subscribe and Publish to Com ID : " << m_device.interface.telegramParam[i].comId << std::endl ;
+            break;
+        
+        default:
+                std::cout<< "Unable to subscribe or publish to any devices..." << std::endl ;
+            break;
+        }
+    }
+
+    err = TRDP_NO_ERR ;
+
+error :
+    return err ;
+}
+
 TRDP_ERR_T TrdpManager::publish(const uint32_t p_comid,
                         const char* p_sourceIp,
                         const char* p_destIp,
@@ -191,40 +261,68 @@ TRDP_ERR_T TrdpManager::readConfiguration(const char* p_nameFile){
 
 
 
-    // for (UINT32 i = 0; i < numIfConfig; i++)
-    // {
-    //     std::cout << "--- Interface " << i << " ---" << std::endl;
-    //     std::cout << "  name      : " << pIfConfig[i].ifName    << std::endl;
-    //     std::cout << "  networkId : " << (int)pIfConfig[i].networkId << std::endl;
-    //     std::cout << "  hostIp    : " << (pIfConfig[i].hostIp >> 24 & 0xFF) << "."
-    //                                   << (pIfConfig[i].hostIp >> 16 & 0xFF) << "."
-    //                                   << (pIfConfig[i].hostIp >> 8  & 0xFF) << "."
-    //                                   << (pIfConfig[i].hostIp       & 0xFF) << std::endl;
-    // }
-
-    // std::cout << "--- PD Config ---" << std::endl;
-    // std::cout << "  timeout   : " << p_pdConfig.timeout   << " µs" << std::endl;
-    // std::cout << "  port      : " << p_pdConfig.port      << std::endl;
-
-    // std::cout << "--- MD Config ---" << std::endl;
-    // std::cout << "  replyTimeout   : " << p_mdConfig.replyTimeout   << " µs" << std::endl;
-    // std::cout << "  confirmTimeout : " << p_mdConfig.confirmTimeout << " µs" << std::endl;
-    // std::cout << "  udpPort        : " << p_mdConfig.udpPort        << std::endl;
-
-
-    // std::cout << "--- Devices configuration ---" << std::endl;
-    // std::cout << "  Port Com   : " << numComPar  << std::endl;
-
-    // std::cout << "id :  " << pComPar->id << std::endl;
-    // std::cout << "qos :  " << (int)pComPar->sendParam.qos << std::endl;
-    // std::cout << "ttl :  " << (int)pComPar->sendParam.ttl << std::endl;
-    // std::cout << "retries :  " << (int)pComPar->sendParam.retries << std::endl;
-
-
 error : 
     return err ;
 
 }
+
+
+
+void TrdpManager::displayConfiguration(){
+
+    // 4. Affiche les données
+    std::cout << "=== Configuration chargée ===" << std::endl;
+    for (uint32_t i = 0 ; i < m_device.device.numInterfaceConfig ; i ++ ){
+        std::cout << "----------------- [ Interface - " << i + 1 << " ] -----------------" << std::endl;
+        std::cout << "name : " << m_device.device.interfaceConfig[i].ifName << std::endl ;
+        std::cout << "ip : "
+                << ((m_device.device.interfaceConfig[i].hostIp >> 24) & 0xFF) << "."
+                << ((m_device.device.interfaceConfig[i].hostIp >> 16) & 0xFF) << "."
+                << ((m_device.device.interfaceConfig[i].hostIp >> 8)  & 0xFF) << "."
+                << ( m_device.device.interfaceConfig[i].hostIp        & 0xFF) << std::endl;
+    }
+
+    for (uint32_t i = 0 ; i < m_device.interface.nbTelegramParam ; i++){
+
+        std::cout << "------------ [Telegram - " << i + 1 << "]" << std::endl;
+        std::cout<< "Com ID : " << m_device.interface.telegramParam[i].comId << std::endl;
+        switch (m_device.interface.telegramParam[i].type)
+        {
+        case 0:
+            std::cout<< "Communication Type : " << "default, direction is not defined" << std::endl;
+            break;
+        case 1:
+            std::cout<< "Communication Type : " << "published" << std::endl;
+            break;
+        case 2:
+            std::cout<< "Communication Type : " << "Subscribe" << std::endl;
+            break;
+        case 3:
+            std::cout<< "Communication Type : " << "Published and Subscribed" << std::endl;
+            break;
+        
+        default:
+            break;
+        }
+        
+        if (m_device.interface.telegramParam[i].srcCnt != 0 ){
+            for (uint32_t j = 0 ; j < m_device.interface.telegramParam[j].srcCnt ; j++){
+                std::cout << "ip (source - "<< j + 1 << ") : " 
+                            << *m_device.interface.telegramParam[j].pSrc->pUriHost1 << std::endl; ;
+            }
+        }
+
+        if (m_device.interface.telegramParam[i].destCnt != 0 ){
+            for (uint32_t j = 0 ; j < m_device.interface.telegramParam[j].srcCnt ; j++){
+                std::cout << "ip (destination - "<< j + 1 << ") : " << *m_device.interface.telegramParam[j].pDest->pUriHost ;
+            }
+        }
+        std::cout << std::endl ;
+    }
+
+}
+
+
 
 
 TRDP_ERR_T TrdpManager::sendData (uint32_t p_comid, const uint8_t  *p_data, const uint32_t p_dataSize){

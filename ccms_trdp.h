@@ -21,6 +21,7 @@ class TrdpManager{
                         const char* p_sourceIp,
                         const char* p_destIp,
                         const uint32_t p_timeout) ;
+        
 
         TRDP_ERR_T publish (const uint32_t p_comid,
                             const char* p_sourceIp,
@@ -30,8 +31,11 @@ class TrdpManager{
                             const uint32_t p_dataSize
         ) ; 
 
+        TRDP_ERR_T subscribe_publish_all_device(const uint8_t *p_subscribeData, const uint8_t *p_publishData) ;
+
         
         TRDP_ERR_T readConfiguration(const char* p_nameFile) ;
+        void displayConfiguration() ;
 
         TRDP_ERR_T sendData (uint32_t p_comid, const uint8_t  *p_data, const uint32_t p_dataSize) ;
         TRDP_ERR_T getData(uint32_t p_comid, getInfo *p_info, uint32_t p_dataSize) ;

@@ -24,7 +24,7 @@
     </device-configuration>
 
     <bus-interface-list>
-        <bus-interface network-id="1" name="eth0" host-ip = "192.168.50.2">
+        <bus-interface network-id="1" name="eth0" host-ip = "10.0.0.54">
 
             <!-- =====================================================
                  CONFIGURATION DU PROCESS TRDP
@@ -109,7 +109,7 @@
                 data-set-id      = "1000"
                 com-parameter-id = "2"
                 create="off"
-                type="sink">
+                type="source">
 
                 <!-- =================================================
                      PARAMÈTRES MD spécifiques à ce telegram
@@ -120,12 +120,13 @@
                      callback        : callbacks                        (défaut: off)
                      protocol        : UDP ou TCP                       (défaut: UDP)
                      ================================================= -->
-                <md-parameter
-                    confirm-timeout = "1000000"
-                    reply-timeout   = "1000000"
-                    marshall        = "off"
-                    callback        = "off"
-                    protocol        = "UDP"/>
+                <pd-parameter
+                    timeout           = "100000"
+                    validity-behavior = "zero"
+                    cycle             = "100000"
+                    redundant         = "0"
+                    marshall          = "off"
+                    callback          = "off"/>
 
                 <!-- =================================================
                      SOURCE
@@ -135,7 +136,7 @@
                      uri2 : second URI pour redondance (optionnel)
                      name : nom lisible (optionnel)
                      ================================================= -->
-                <source id="1" uri1="192.168.50.1"/>
+                <source id="1" uri1="10.0.0.54"/>
 
                 <!-- =================================================
                      DESTINATION
@@ -144,7 +145,7 @@
                             syntaxe : [user@]host
                      name : nom lisible (optionnel)
                      ================================================= -->
-                <destination id="1" uri="192.168.50.2"/>
+                <destination id="1" uri="10.0.0.227"/>
 
             </telegram>
 
@@ -153,7 +154,7 @@
                 com-id           = "2001"
                 data-set-id      = "1001"
                 com-parameter-id = "1"
-                type="source-sink">
+                type="sink">
 
                 <!-- =================================================
                      PARAMÈTRES PD spécifiques à ce telegram
@@ -173,8 +174,8 @@
                     marshall          = "off"
                     callback          = "off"/>
 
-                <source      id="1" uri1="192.168.50.1"/>
-                <destination id="1" uri="192.168.50.2"/>
+                <source      id="1" uri1="10.0.0.54"/>
+                <destination id="1" uri="10.0.0.227"/>
 
             </telegram>
 
